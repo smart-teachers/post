@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة النشر في مجموعات الفيسبوك</title>
+    <style>
+        /* --- نفس كود CSS الذي قدمته في البداية --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto; /* Added top/bottom margin */
+            background-color: #fff;
+            padding: 30px; /* Increased padding */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+        }
+        h1 {
+            color: #1877f2;
+            text-align: center;
+            margin-bottom: 30px; /* Increased margin */
+        }
+        .form-group {
+            margin-bottom: 20px; /* Increased margin */
+        }
+        label {
+            display: block;
+            margin-bottom: 8px; /* Increased margin */
+            font-weight: bold;
+            color: #4b4f56; /* Slightly darker label color */
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        input[type="file"], /* Added file input styling */
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px; /* Increased padding */
+            border: 1px solid #dddfe2;
+            border-radius: 6px; /* Slightly larger radius */
+            box-sizing: border-box;
+            font-size: 14px; /* Consistent font size */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        input[type="file"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+            outline: none;
+        }
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        .row {
+            display: flex;
+            gap: 15px; /* Increased gap */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .col {
+            flex: 1;
+            min-width: 150px; /* Minimum width for columns */
+        }
+        button {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            padding: 10px 20px; /* Adjusted padding */
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+        }
+        button:hover {
+            background-color: #166fe5;
+        }
+        button:disabled {
+            background-color: #bcc0c4; /* Disabled button style */
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        #loadGroups, #startLoadingBtn {
+             margin-top: 5px;
+        }
+        .groups-container {
+            max-height: 350px; /* Increased height */
+            overflow-y: auto;
+            border: 1px solid #dddfe2;
+            padding: 15px;
+            margin-top: 10px; /* Added margin top */
+            margin-bottom: 15px;
+            border-radius: 6px;
+            background-color: #f5f6f7; /* Light background for contrast */
+        }
+        .group-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px; /* Increased margin */
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.1s ease;
+        }
+        .group-item:hover {
+             background-color: #ebedf0;
+        }
+        .group-item label {
+            margin-bottom: 0; /* Override default label margin */
+            margin-right: 8px; /* Space between checkbox and label */
+            font-weight: normal; /* Normal weight for group names */
+            color: #1c1e21;
+            cursor: pointer;
+            flex-grow: 1; /* Allow label to take remaining space */
+        }
+        .group-item input[type="checkbox"] {
+             width: auto; /* Override default width */
+             margin-left: 5px; /* Margin for RTL */
+             cursor: pointer;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 12px 15px; /* Adjusted padding */
+            border-radius: 6px;
+            display: none; /* Initially hidden */
+            font-size: 14px;
+            border: 1px solid transparent;
+        }
+        .status.info { /* Added info style */
+             background-color: #e7f3ff;
+             color: #1877f2;
+             border-color: #bde0ff;
+             display: block;
+        }
+        .status.success {
+            background-color: #d4edda; /* Green success */
+            color: #155724;
+            border-color: #c3e6cb;
+            display: block;
+        }
+        .status.error {
+            background-color: #f8d7da; /* Red error */
+            color: #721c24;
+            border-color: #f5c6cb;
+            display: block;
+        }
+        .status.warning {
+            background-color: #fff3cd; /* Yellow warning */
+            color: #856404;
+            border-color: #ffeeba;
+            display: block;
+        }
+        .schedule-options {
+            display: none;
+            margin-top: 15px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+         .schedule-options label {
+            margin-top: 10px;
+        }
+         .schedule-options input[type="date"],
+         .schedule-options input[type="time"] {
+            margin-bottom: 10px;
+        }
+        #uploadedImage {
+            max-width: 100%;
+            max-height: 200px; /* Limit preview height */
+            display: none;
+            margin-top: 15px;
+            border-radius: 6px;
+            border: 1px solid #dddfe2;
+        }
+        .progress-container {
+            margin-top: 25px;
+            display: none; /* Initially hidden */
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e9ebee; /* Lighter background */
+            border-radius: 6px;
+            height: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress {
+            position: absolute;
+            height: 100%;
+            background-color: #1877f2;
+            width: 0%;
+            transition: width 0.3s ease-out; /* Smoother transition */
+            border-radius: 6px 0 0 6px; /* Match parent radius */
+        }
+        .progress-info {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 13px;
+            color: #606770;
+        }
+        .timer-display {
+            background-color: #e7f3ff; /* Info color background */
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 16px; /* Slightly smaller */
+            font-weight: bold;
+            display: none; /* Initially hidden */
+            color: #1877f2;
+            border: 1px solid #bde0ff;
+        }
+        .group-actions {
+            margin-top: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .group-actions button {
+             background-color: #e4e6eb; /* Lighter buttons for actions */
+             color: #050505;
+             padding: 8px 15px; /* Smaller padding */
+        }
+        .group-actions button:hover {
+             background-color: #d8dade;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Vertically align items */
+            gap: 5px;
+            margin-top: 20px; /* Increased margin */
+            flex-wrap: wrap; /* Allow wrapping */
+        }
+        .page-btn {
+            background-color: #e4e6eb;
+            color: #050505;
+            border: none;
+            padding: 8px 12px; /* Adjusted padding */
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            min-width: 35px; /* Minimum width */
+            text-align: center;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .page-btn:hover {
+            background-color: #d8dade;
+        }
+        .page-btn.active {
+            background-color: #1877f2;
+            color: white;
+            font-weight: bold;
+        }
+        .page-btn:disabled {
+             background-color: #f0f2f5;
+             color: #bcc0c4;
+             cursor: not-allowed;
+        }
+        .pagination span { /* Style for ellipsis */
+            padding: 5px;
+            color: #606770;
+        }
+        .group-counter {
+            margin-top: 10px; /* Adjusted margin */
+            font-size: 14px;
+            color: #606770; /* Standard grey */
+        }
+        .filter-input {
+            margin-bottom: 15px;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 6px;
+            border: 1px solid #dddfe2;
+        }
+        .loading {
+            text-align: center;
+            padding: 30px 20px; /* Increased padding */
+            color: #606770;
+        }
+        .spinner {
+            display: inline-block;
+            width: 35px; /* Slightly larger */
+            height: 35px;
+            border: 4px solid rgba(24, 119, 242, 0.2); /* Thicker border, lighter alpha */
+            border-radius: 50%;
+            border-top-color: #1877f2;
+            animation: spin 0.8s linear infinite; /* Faster spin */
+            margin-bottom: 10px; /* Space below spinner */
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        #stopBtn { /* Specific style for stop button */
+            background-color: #fa3e3e; /* Brighter red */
+        }
+        #stopBtn:hover {
+             background-color: #e02c2c; /* Darker red on hover */
+        }
+        .security-options label { /* Style labels next to checkboxes */
+             display: inline-block;
+             margin-right: 5px;
+             margin-bottom: 0;
+             font-weight: normal;
+             vertical-align: middle;
+        }
+         .security-options input[type="checkbox"] {
+             width: auto;
+             vertical-align: middle;
+             margin-left: 10px; /* Space after checkbox (RTL) */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>أداة النشر التلقائي في مجموعات الفيسبوك</h1>
+         <div class="status warning" style="display:block; border-color:#ffeeba;">
+            <strong>تحذير هام:</strong> استخدام هذه الأداة بشكل مكثف أو غير مسؤول قد يؤدي إلى تقييد أو حظر حسابك على فيسبوك. استخدمها بحذر وعلى مسؤوليتك الكاملة. تأكد من الالتزام بسياسات فيسبوك.
+        </div>
+
+        <div class="form-group">
+            <label for="accessToken">رمز وصول فيسبوك (Access Token):</label>
+            <input type="password" id="accessToken" placeholder="الصق رمز الوصول هنا (يجب أن يتضمن أذونات النشر في المجموعات)">
+            <small style="color: #dc3545; display: block; margin-top: 5px;">تنبيه: لا تشارك رمز الوصول هذا أبداً. سيتم استخدامه مباشرة من المتصفح.</small>
+        </div>
+
+        <div class="form-group">
+            <label>مجموعات الفيسبوك:</label>
+            <button id="loadGroups">تحميل المجموعات</button>
+            <div id="groupLoadingOptions" style="display: none; margin-top: 10px; background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #eee;">
+                <div class="row">
+                    <div class="col">
+                        <label for="loadLimit">الحد الأقصى للمجموعات للتحميل:</label>
+                        <select id="loadLimit">
+                            <option value="25">25 مجموعة</option>
+                            <option value="50">50 مجموعة</option>
+                            <option value="100">100 مجموعة</option>
+                            <option value="250" selected>250 مجموعة</option>
+                            <option value="500">500 مجموعة</option>
+                            <option value="all">جميع المجموعات (قد يستغرق وقتاً طويلاً)</option>
+                        </select>
+                    </div>
+                    <div class="col" style="align-self: flex-end;">
+                        <button id="startLoadingBtn">بدء التحميل</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="groupSearchContainer" style="display: none; margin-top: 15px;">
+                 <label for="groupFilter">بحث وتصفية المجموعات:</label>
+                <input type="text" id="groupFilter" class="filter-input" placeholder="اكتب اسم مجموعة للبحث...">
+                <div class="group-actions">
+                    <button id="selectAllGroups">تحديد كل المجموعات المعروضة</button>
+                    <button id="deselectAllGroups">إلغاء تحديد كل المجموعات المعروضة</button>
+                    <!-- <button id="selectFilteredGroups">تحديد كل المجموعات المفلترة (قد يكون مربكاً)</button> -->
+                </div>
+                <div class="group-counter" id="groupCounter"></div>
+            </div>
+
+            <div class="groups-container" id="groupsContainer">
+                <p>اضغط على "تحميل المجموعات" بعد إدخال رمز الوصول.</p>
+            </div>
+
+            <div class="pagination" id="groupsPagination"></div>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+
+        <div class="form-group">
+            <label for="postContent">محتوى المنشور:</label>
+            <textarea id="postContent" placeholder="اكتب محتوى المنشور هنا... يمكنك استخدام {اسم_المجموعة} ليتم استبداله باسم المجموعة عند النشر."></textarea>
+             <small style="color: #606770; display: block; margin-top: 5px;">استخدم `{اسم_المجموعة}` في النص ليتم استبداله باسم المجموعة تلقائياً (إذا أردت).</small>
+        </div>
+
+        <div class="form-group">
+            <label for="imageUpload">إرفاق صورة (اختياري):</label>
+            <input type="file" id="imageUpload" accept="image/png, image/jpeg, image/gif">
+            <img id="uploadedImage" src="" alt="معاينة الصورة المرفقة">
+        </div>
+
+        <div class="form-group">
+            <label for="postType">نوع النشر:</label>
+            <select id="postType">
+                <option value="now" selected>نشر الآن</option>
+                <option value="schedule">جدولة بدء النشر</option>
+            </select>
+
+            <div class="schedule-options" id="scheduleOptions">
+                <p style="font-size: 14px; color: #1c1e21;">سيتم بدء عملية النشر في المجموعات المحددة (مع الفواصل الزمنية) في الوقت التالي:</p>
+                <label for="scheduleDate">تاريخ البدء:</label>
+                <input type="date" id="scheduleDate">
+                <label for="scheduleTime">وقت البدء:</label>
+                <input type="time" id="scheduleTime">
+                 <small style="color: #606770; display: block; margin-top: 5px;">ملاحظة: يجب أن يكون الوقت المستقبلي بفارق 10 دقائق على الأقل.</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>الفاصل الزمني بين كل منشور والآخر (بالدقائق):</label>
+            <div class="row">
+                <div class="col">
+                    <label for="minInterval">الحد الأدنى:</label>
+                    <input type="number" id="minInterval" value="15" min="5">
+                </div>
+                <div class="col">
+                    <label for="maxInterval">الحد الأقصى:</label>
+                    <input type="number" id="maxInterval" value="30" min="10">
+                </div>
+            </div>
+            <p style="font-size: 13px; color: #606770; margin-top: 5px;">سيتم اختيار فترة زمنية عشوائية بين الحد الأدنى والأقصى بين كل منشور لتجنب الحظر. (ننصح بـ 15-30 دقيقة أو أكثر).</p>
+        </div>
+
+        <div class="form-group">
+            <label for="postingMode">ترتيب النشر في المجموعات:</label>
+            <select id="postingMode">
+                <option value="sequential" selected>متتابع (بنفس ترتيب ظهورها أو فلترتها)</option>
+                <option value="random">عشوائي (اختيار المجموعات بترتيب عشوائي)</option>
+            </select>
+        </div>
+
+        <div class="form-group security-options">
+            <label>خيارات الأمان (مُوصى بها):</label>
+            <div>
+                <input type="checkbox" id="pauseOption" checked>
+                <label for="pauseOption">إيقاف مؤقت لمدة 60 دقيقة بعد كل 5 منشورات</label>
+            </div>
+            <div>
+                <input type="checkbox" id="randomizeContent">
+                <label for="randomizeContent">محاولة تنويع المحتوى النصي قليلاً (إضافة رموز غير مرئية)</label>
+            </div>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+
+        <button id="publishBtn">🚀 بدء النشر / الجدولة</button>
+        <button id="stopBtn" style="display: none;">🛑 إيقاف النشر فوراً</button>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <div class="progress-info" id="progressInfo">0 من 0 مجموعات</div>
+            <div class="timer-display" id="timerDisplay">الانتظار: 00:00</div>
+        </div>
+
+        <div class="status" id="statusMessage"></div>
+
+    </div>
+
+    <script>
+        // --- عناصر DOM ---
+        const accessTokenInput = document.getElementById('accessToken');
+        const loadGroupsBtn = document.getElementById('loadGroups');
+        const groupLoadingOptions = document.getElementById('groupLoadingOptions');
+        const loadLimitSelect = document.getElementById('loadLimit');
+        const startLoadingBtn = document.getElementById('startLoadingBtn');
+        const groupsContainer = document.getElementById('groupsContainer');
+        const groupsPagination = document.getElementById('groupsPagination');
+        const groupSearchContainer = document.getElementById('groupSearchContainer');
+        const groupFilterInput = document.getElementById('groupFilter');
+        const selectAllBtn = document.getElementById('selectAllGroups');
+        const deselectAllBtn = document.getElementById('deselectAllGroups');
+        // const selectFilteredBtn = document.getElementById('selectFilteredGroups'); // أبقيته معلقًا لأنه قد يكون مربكًا
+        const groupCounter = document.getElementById('groupCounter');
+        const postContentInput = document.getElementById('postContent');
+        const imageUpload = document.getElementById('imageUpload');
+        const uploadedImage = document.getElementById('uploadedImage');
+        const postTypeSelect = document.getElementById('postType');
+        const scheduleOptions = document.getElementById('scheduleOptions');
+        const scheduleDateInput = document.getElementById('scheduleDate');
+        const scheduleTimeInput = document.getElementById('scheduleTime');
+        const minIntervalInput = document.getElementById('minInterval');
+        const maxIntervalInput = document.getElementById('maxInterval');
+        const postingModeSelect = document.getElementById('postingMode');
+        const pauseOptionCheckbox = document.getElementById('pauseOption');
+        const randomizeContentCheckbox = document.getElementById('randomizeContent');
+        const publishBtn = document.getElementById('publishBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressInfo = document.getElementById('progressInfo');
+        const timerDisplay = document.getElementById('timerDisplay');
+
+        // --- متغيرات الحالة ---
+        let isPosting = false;
+        let currentlySelectedGroupsForPosting = []; // قائمة المجموعات المختارة عند بدء النشر
+        let currentGroupIndex = 0;
+        let postCountSincePause = 0;
+        let stopPostingFlag = false;
+        let timeoutId = null;
+        let countdownInterval = null;
+
+        let allGroups = []; // يخزن كل المجموعات التي تم تحميلها
+        let filteredGroups = []; // يخزن المجموعات بعد الفلترة
+        let currentVisibleGroups = []; // يخزن المجموعات الظاهرة في الصفحة الحالية
+        let currentPage = 1;
+        const groupsPerPage = 20;
+        let isLoadingGroups = false;
+        const API_VERSION = 'v19.0';
+
+        // --- وظائف الواجهة المساعدة ---
+
+        function showStatus(message, type = 'info') {
+            statusMessage.innerHTML = message; // Use innerHTML to allow basic formatting like <strong>
+            statusMessage.className = `status ${type}`;
+            statusMessage.style.display = 'block';
+            // Scroll into view if it's an error or warning
+            if (type === 'error' || type === 'warning') {
+                statusMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+        }
+
+        function updateProgress(current, total) {
+            const percentage = total > 0 ? (current / total) * 100 : 0;
+            progressBar.style.width = `${percentage}%`;
+            progressInfo.textContent = `التعامل مع المجموعة ${current} من ${total}`;
+        }
+
+        function startCountdownTimer(seconds) {
+            clearInterval(countdownInterval);
+            timerDisplay.style.display = 'block';
+            let remainingSeconds = Math.max(0, seconds); // Ensure non-negative
+
+            const updateTimer = () => {
+                const totalMinutes = Math.floor(remainingSeconds / 60);
+                const hrs = Math.floor(totalMinutes / 60);
+                const mins = totalMinutes % 60;
+                const secs = remainingSeconds % 60;
+
+                let displayString = "الانتظار: ";
+                if (hrs > 0) {
+                    displayString += `${String(hrs).padStart(2, '0')}:`;
+                }
+                displayString += `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+                timerDisplay.textContent = displayString;
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    timerDisplay.style.display = 'none';
+                }
+                remainingSeconds--;
+            };
+
+            updateTimer();
+            countdownInterval = setInterval(updateTimer, 1000);
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function disableForm(disabled) {
+            publishBtn.disabled = disabled;
+            accessTokenInput.disabled = disabled;
+            loadGroupsBtn.disabled = disabled;
+            startLoadingBtn.disabled = disabled; // Also disable this if loading is in progress
+            postContentInput.disabled = disabled;
+            imageUpload.disabled = disabled;
+            postTypeSelect.disabled = disabled;
+            scheduleDateInput.disabled = disabled;
+            scheduleTimeInput.disabled = disabled;
+            minIntervalInput.disabled = disabled;
+            maxIntervalInput.disabled = disabled;
+            postingModeSelect.disabled = disabled;
+            pauseOptionCheckbox.disabled = disabled;
+            randomizeContentCheckbox.disabled = disabled;
+            // Don't disable group selection buttons/filter while posting, maybe user wants to prepare next batch
+            // groupFilterInput.disabled = disabled;
+            // selectAllBtn.disabled = disabled;
+            // deselectAllBtn.disabled = disabled;
+        }
+
+        // --- وظائف تحميل المجموعات ---
+
+        loadGroupsBtn.addEventListener('click', function() {
+            const token = accessTokenInput.value;
+            if (!token) {
+                showStatus('<strong>خطأ:</strong> يرجى إدخال رمز الوصول أولاً.', 'error');
+                accessTokenInput.focus();
+                return;
+            }
+            groupLoadingOptions.style.display = 'block';
+            groupsContainer.innerHTML = '<p>اختر الحد الأقصى للمجموعات ثم اضغط "بدء التحميل".</p>';
+            groupSearchContainer.style.display = 'none';
+            groupsPagination.innerHTML = '';
+            groupCounter.textContent = '';
+            allGroups = []; // Reset groups on new load attempt
+            filteredGroups = [];
+            currentVisibleGroups = [];
+        });
+
+        startLoadingBtn.addEventListener('click', async function() {
+            const token = accessTokenInput.value;
+            if (!token) {
+                showStatus('<strong>خطأ:</strong> رمز الوصول مفقود.', 'error'); return;
+            }
+            if (isLoadingGroups) return;
+
+            const limitOption = loadLimitSelect.value;
+            const limit = limitOption === 'all' ? Infinity : parseInt(limitOption);
+
+            isLoadingGroups = true;
+            startLoadingBtn.disabled = true;
+            loadGroupsBtn.disabled = true;
+            showStatus('جاري تحميل المجموعات من فيسبوك...', 'info');
+            groupsContainer.innerHTML = '<div class="loading"><div class="spinner"></div><p>يرجى الانتظار، قد يستغرق الأمر بعض الوقت...</p></div>';
+            allGroups = [];
+            filteredGroups = [];
+            currentVisibleGroups = [];
+            currentPage = 1;
+            groupCounter.textContent = 'جاري التحميل...';
+            groupsPagination.innerHTML = ''; // Clear pagination
+
+            try {
+                await fetchAllGroups(token, limit);
+                showStatus(`تم تحميل ${allGroups.length} مجموعة بنجاح! يمكنك الآن البحث والتحديد.`, 'success');
+                groupCounter.textContent = `تم تحميل ${allGroups.length} مجموعة.`;
+                groupSearchContainer.style.display = 'block';
+                updateFilteredGroups(); // Initial filter/display
+                showPage(1);
+            } catch (error) {
+                console.error("Error loading groups:", error);
+                showStatus(`<strong>فشل تحميل المجموعات:</strong> ${error.message}. تأكد من صلاحية الرمز والأذونات.`, 'error');
+                groupsContainer.innerHTML = `<p style="color: red;">حدث خطأ: ${error.message}</p>`;
+                groupCounter.textContent = 'فشل التحميل';
+            } finally {
+                isLoadingGroups = false;
+                startLoadingBtn.disabled = false;
+                loadGroupsBtn.disabled = false;
+            }
+        });
+
+        async function fetchAllGroups(token, maxLimit) {
+            let groups = [];
+            // Request permissions field to potentially filter later, although reliable filtering is hard client-side
+            let url = `https://graph.facebook.com/${API_VERSION}/me/groups?fields=id,name,privacy,permissions&limit=100&access_token=${token}`;
+            let count = 0;
+            let fetchedCount = 0; // Count groups actually returned by API
+
+            while (url && groups.length < maxLimit) {
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+
+                    if (data.error) {
+                        // Handle specific errors if needed
+                         if (data.error.code === 190) { // Auth errors
+                              throw new Error(`مصادقة فاشلة: ${data.error.message} (تأكد من صلاحية الرمز).`);
+                         } else if (data.error.code === 10) { // Permission errors
+                             throw new Error(`خطأ أذونات: ${data.error.message} (تأكد أن الرمز لديه إذن 'groups_access_member_info').`);
+                         } else {
+                             throw new Error(`خطأ API (${data.error.code}): ${data.error.message}`);
+                         }
+                    }
+
+                    if (data.data && data.data.length > 0) {
+                        fetchedCount += data.data.length;
+                        // Add groups fetched in this page, respecting the overall maxLimit
+                        const remainingLimit = maxLimit - groups.length;
+                        const groupsToAdd = data.data.slice(0, remainingLimit);
+                        groups.push(...groupsToAdd);
+
+                        groupCounter.textContent = `جاري تحميل المجموعات... (${groups.length} تم العثور عليها)`;
+                    } else {
+                        break; // No more data
+                    }
+
+                    // Check for next page, only if we haven't hit the limit
+                    if (groups.length < maxLimit && data.paging && data.paging.next) {
+                        url = data.paging.next;
+                    } else {
+                        url = null; // Stop if limit reached or no next page
+                    }
+
+                } catch (error) {
+                    console.error("Error fetching group page:", error);
+                    // Rethrow with more context
+                    throw new Error(`فشل في جلب صفحة المجموعات: ${error.message}`);
+                }
+            }
+            allGroups = groups; // Assign the final list
+        }
+
+
+        // --- وظائف فلترة وعرض المجموعات ---
+
+        groupFilterInput.addEventListener('input', function() {
+            currentPage = 1; // Reset to first page on filter change
+            updateFilteredGroups();
+            showPage(currentPage);
+        });
+
+        function updateFilteredGroups() {
+            const filterText = groupFilterInput.value.trim().toLowerCase();
+            if (filterText === '') {
+                filteredGroups = [...allGroups];
+            } else {
+                filteredGroups = allGroups.filter(group =>
+                    group.name.toLowerCase().includes(filterText)
+                );
+            }
+
+            if (allGroups.length > 0) {
+               groupCounter.textContent = `عرض ${filteredGroups.length} من ${allGroups.length} مجموعات مطابقة للفلتر.`;
+            } else if (!isLoadingGroups) {
+               groupCounter.textContent = `لم يتم تحميل أي مجموعات بعد.`;
+            }
+
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const pageCount = Math.ceil(filteredGroups.length / groupsPerPage);
+            groupsPagination.innerHTML = ''; // Clear existing buttons
+
+            if (pageCount <= 1) return; // No pagination needed for 0 or 1 page
+
+            function createPageButton(text, pageNum, isDisabled = false, isActive = false) {
+                const btn = document.createElement('button');
+                btn.className = 'page-btn';
+                btn.textContent = text;
+                btn.disabled = isDisabled;
+                if (isActive) btn.classList.add('active');
+                if (!isDisabled && pageNum) {
+                    btn.addEventListener('click', () => showPage(pageNum));
+                }
+                return btn;
+            }
+
+             function createEllipsis() {
+                const span = document.createElement('span');
+                span.textContent = '...';
+                return span;
+            }
+
+            // Previous Button
+            groupsPagination.appendChild(createPageButton('« السابق', currentPage - 1, currentPage === 1));
+
+            // Page Number Buttons (with ellipsis logic)
+            const maxVisiblePages = 3; // Max numeric buttons shown around current page
+            let startPage, endPage;
+
+             if (pageCount <= maxVisiblePages + 2) { // Show all if not too many pages
+                startPage = 1;
+                endPage = pageCount;
+            } else {
+                if (currentPage <= Math.ceil(maxVisiblePages / 2) + 1) {
+                    startPage = 1;
+                    endPage = maxVisiblePages;
+                    groupsPagination.appendChild(createPageButton(1, 1, false, currentPage === 1));
+                    for (let i = 2; i <= endPage; i++) {
+                         groupsPagination.appendChild(createPageButton(i, i, false, currentPage === i));
+                    }
+                    groupsPagination.appendChild(createEllipsis());
+                    groupsPagination.appendChild(createPageButton(pageCount, pageCount));
+                } else if (currentPage >= pageCount - Math.floor(maxVisiblePages / 2)) {
+                    startPage = pageCount - maxVisiblePages + 1;
+                    endPage = pageCount;
+                    groupsPagination.appendChild(createPageButton(1, 1));
+                    groupsPagination.appendChild(createEllipsis());
+                    for (let i = startPage; i <= endPage; i++) {
+                         groupsPagination.appendChild(createPageButton(i, i, false, currentPage === i));
+                    }
+                } else {
+                    startPage = currentPage - Math.floor(maxVisiblePages / 2);
+                    endPage = currentPage + Math.floor(maxVisiblePages / 2);
+                     groupsPagination.appendChild(createPageButton(1, 1));
+                     groupsPagination.appendChild(createEllipsis());
+                     for (let i = startPage; i <= endPage; i++) {
+                         groupsPagination.appendChild(createPageButton(i, i, false, currentPage === i));
+                    }
+                    groupsPagination.appendChild(createEllipsis());
+                    groupsPagination.appendChild(createPageButton(pageCount, pageCount));
+                }
+            }
+
+
+            // Next Button
+            groupsPagination.appendChild(createPageButton('التالي »', currentPage + 1, currentPage === pageCount));
+        }
+
+        function showPage(pageNum) {
+            currentPage = pageNum;
+            const startIndex = (pageNum - 1) * groupsPerPage;
+            const endIndex = Math.min(startIndex + groupsPerPage, filteredGroups.length);
+            // Get the slice of groups for the current page
+            currentVisibleGroups = filteredGroups.slice(startIndex, endIndex);
+
+            groupsContainer.innerHTML = ''; // Clear previous content
+
+            if (currentVisibleGroups.length === 0) {
+                if (allGroups.length > 0) {
+                    groupsContainer.innerHTML = '<p>لا توجد مجموعات تطابق معايير البحث الحالية.</p>';
+                } else if (!isLoadingGroups) {
+                    groupsContainer.innerHTML = '<p>لم يتم تحميل أي مجموعات. الرجاء استخدام زر "تحميل المجموعات".</p>';
+                }
+                // If loading, the loading indicator is already shown
+            } else {
+                // Get IDs of groups currently selected for posting
+                const selectedPostingGroupIds = new Set(currentlySelectedGroupsForPosting.map(g => g.id));
+
+                currentVisibleGroups.forEach(group => {
+                    const groupItem = document.createElement('div');
+                    groupItem.className = 'group-item';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = group.id;
+                    checkbox.id = `group_${group.id}`;
+                    checkbox.dataset.name = group.name;
+                    // Check if this group is in the list selected for the *next* posting operation
+                    checkbox.checked = selectedPostingGroupIds.has(group.id);
+                    checkbox.addEventListener('change', handleGroupSelectionChange); // Add listener
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `group_${group.id}`;
+                    label.textContent = group.name; // Display name only
+
+                    groupItem.appendChild(checkbox);
+                    groupItem.appendChild(label);
+                    groupsContainer.appendChild(groupItem);
+                });
+            }
+
+            updatePagination(); // Refresh pagination buttons
+        }
+
+        // --- وظائف تحديد المجموعات ---
+
+        function handleGroupSelectionChange(event) {
+             const checkbox = event.target;
+             const groupId = checkbox.value;
+             const groupName = checkbox.dataset.name;
+
+             if (checkbox.checked) {
+                 // Add to the list if not already present
+                 if (!currentlySelectedGroupsForPosting.some(g => g.id === groupId)) {
+                     currentlySelectedGroupsForPosting.push({ id: groupId, name: groupName });
+                 }
+             } else {
+                 // Remove from the list
+                 currentlySelectedGroupsForPosting = currentlySelectedGroupsForPosting.filter(g => g.id !== groupId);
+             }
+             // Optional: Update a counter for selected groups if needed
+             // console.log("Selected for posting:", currentlySelectedGroupsForPosting.length);
+        }
+
+        selectAllBtn.addEventListener('click', function() {
+             // Select only the groups currently visible on the page
+            const checkboxes = groupsContainer.querySelectorAll('input[type="checkbox"]');
+            let countAdded = 0;
+            checkboxes.forEach(checkbox => {
+                if (!checkbox.checked) {
+                     checkbox.checked = true;
+                     // Trigger the change handler to add to the main list
+                     handleGroupSelectionChange({ target: checkbox });
+                     countAdded++;
+                }
+            });
+            if (countAdded > 0) {
+                 showStatus(`تم تحديد ${countAdded} مجموعة إضافية في هذه الصفحة. الإجمالي المحدد للنشر: ${currentlySelectedGroupsForPosting.length}.`, 'info');
+            }
+        });
+
+        deselectAllBtn.addEventListener('click', function() {
+             // Deselect only the groups currently visible on the page
+            const checkboxes = groupsContainer.querySelectorAll('input[type="checkbox"]');
+             let countRemoved = 0;
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    checkbox.checked = false;
+                    // Trigger the change handler to remove from the main list
+                    handleGroupSelectionChange({ target: checkbox });
+                     countRemoved++;
+                }
+            });
+             if (countRemoved > 0) {
+                 showStatus(`تم إلغاء تحديد ${countRemoved} مجموعة في هذه الصفحة. الإجمالي المحدد للنشر: ${currentlySelectedGroupsForPosting.length}.`, 'info');
+            }
+        });
+
+
+        // --- وظائف النشر ---
+
+        publishBtn.addEventListener('click', async function() {
+            const token = accessTokenInput.value;
+            let content = postContentInput.value.trim();
+            const imageFile = imageUpload.files[0];
+            const postType = postTypeSelect.value;
+            const scheduleDate = scheduleDateInput.value;
+            const scheduleTime = scheduleTimeInput.value;
+
+            // --- Validations ---
+            if (!token) { showStatus('<strong>خطأ:</strong> يرجى إدخال رمز الوصول.', 'error'); return; }
+            if (!content && !imageFile) { showStatus('<strong>خطأ:</strong> يجب إدخال محتوى نصي أو اختيار صورة.', 'error'); return; }
+            if (currentlySelectedGroupsForPosting.length === 0) { showStatus('<strong>خطأ:</strong> يرجى تحديد مجموعة واحدة على الأقل للنشر فيها.', 'error'); return; }
+            if (postType === 'schedule' && (!scheduleDate || !scheduleTime)) { showStatus('<strong>خطأ:</strong> يرجى تحديد تاريخ ووقت بدء الجدولة.', 'error'); return; }
+            if (parseInt(minIntervalInput.value) >= parseInt(maxIntervalInput.value)) { showStatus('<strong>خطأ:</strong> الحد الأدنى للفاصل الزمني يجب أن يكون أقل من الحد الأقصى.', 'error'); return; }
+             if (parseInt(minIntervalInput.value) < 5 || parseInt(maxIntervalInput.value) < 5) { showStatus('<strong>خطأ:</strong> يجب أن يكون الفاصل الزمني 5 دقائق على الأقل.', 'error'); return; }
+
+
+            // --- Confirmation for large number ---
+            if (currentlySelectedGroupsForPosting.length > 30) { // Reduced threshold for warning
+                if (!confirm(`⚠️ تحذير شديد ⚠️\n\nأنت على وشك النشر في ${currentlySelectedGroupsForPosting.length} مجموعة.\n\nالنشر في عدد كبير جدًا من المجموعات، حتى مع وجود فواصل زمنية، يحمل خطرًا عاليًا جدًا لتقييد حسابك أو حظره نهائيًا بواسطة فيسبوك.\n\nهل أنت متأكد تمامًا وتريد المتابعة على مسؤوليتك الكاملة؟`)) {
+                    return;
+                }
+                showStatus(`تم تحديد ${currentlySelectedGroupsForPosting.length} مجموعة. المتابعة على مسؤوليتك الكاملة. راقب حسابك.`, 'warning');
+            } else {
+                 showStatus(`جاري تحضير النشر لـ ${currentlySelectedGroupsForPosting.length} مجموعة...`, 'info');
+            }
+
+            // --- Prepare for Posting ---
+            // Clone the selected groups array for this specific posting operation
+            const groupsToPost = [...currentlySelectedGroupsForPosting];
+
+            if (postingModeSelect.value === 'random') {
+                shuffleArray(groupsToPost);
+            }
+
+            isPosting = true;
+            stopPostingFlag = false;
+            currentGroupIndex = 0;
+            postCountSincePause = 0;
+            disableForm(true); // Disable form elements
+            stopBtn.style.display = 'inline-block';
+            progressContainer.style.display = 'block';
+            updateProgress(0, groupsToPost.length);
+
+            // --- Handle Scheduling vs Immediate Start ---
+             if (postType === 'schedule') {
+                 const scheduleDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
+                 const now = new Date();
+                 const delayMillis = scheduleDateTime.getTime() - now.getTime();
+                 const minDelayMillis = 10 * 60 * 1000 - 1000; // 10 minutes minus a second tolerance
+
+                 if (delayMillis <= minDelayMillis) {
+                     showStatus('<strong>خطأ:</strong> وقت الجدولة المحدد في الماضي أو قريب جدًا (يجب أن يكون بعد 10 دقائق على الأقل).', 'error');
+                     disableForm(false); // Re-enable form
+                     stopBtn.style.display = 'none';
+                     progressContainer.style.display = 'none';
+                     isPosting = false;
+                     return;
+                 }
+
+                 showStatus(`تم جدولة بدء النشر في ${scheduleDateTime.toLocaleString('ar-EG')}. النشر سيتم لـ ${groupsToPost.length} مجموعة.`, 'success');
+                 startCountdownTimer(Math.floor(delayMillis / 1000));
+
+                 timeoutId = setTimeout(() => {
+                     if (!stopPostingFlag) {
+                         showStatus(`⏰ بدء عملية النشر المجدولة لـ ${groupsToPost.length} مجموعة...`, 'info');
+                         postToNextGroup(groupsToPost); // Pass the specific list for this run
+                     } else {
+                         showStatus('تم إلغاء النشر المجدول قبل البدء.', 'warning');
+                         // Reset UI handled by stop button logic
+                     }
+                 }, delayMillis);
+
+             } else {
+                 showStatus(`🚀 بدء عملية النشر الآن لـ ${groupsToPost.length} مجموعة...`, 'info');
+                 postToNextGroup(groupsToPost); // Pass the specific list for this run
+             }
+        });
+
+         stopBtn.addEventListener('click', function() {
+            if (!isPosting) return; // Do nothing if not posting
+
+            stopPostingFlag = true; // Signal to stop loops/timeouts
+            isPosting = false;
+            clearTimeout(timeoutId); // Clear any pending post/pause timeout
+            clearInterval(countdownInterval); // Stop any active countdown
+            timerDisplay.style.display = 'none';
+
+            showStatus('⚠️ تم طلب إيقاف النشر. جاري إيقاف العمليات...', 'warning');
+            stopBtn.disabled = true; // Prevent multiple clicks
+
+            // Re-enable the form and reset UI elements after a short delay
+            // to allow any ongoing fetch to potentially abort (though fetch isn't truly abortable this way)
+            setTimeout(() => {
+                disableForm(false);
+                stopBtn.style.display = 'none';
+                stopBtn.disabled = false; // Re-enable for future use
+                // Keep progress bar potentially visible to show where it stopped
+                // progressContainer.style.display = 'none';
+                showStatus('🛑 تم إيقاف عملية النشر.', 'error');
+            }, 1500);
+        });
+
+
+        async function postToNextGroup(groupsList) { // Takes the list for this specific run
+            if (stopPostingFlag || currentGroupIndex >= groupsList.length) {
+                // --- Posting Finished or Stopped ---
+                if (!stopPostingFlag && isPosting) { // Finished normally
+                    showStatus(`✅ اكتمل النشر بنجاح في ${currentGroupIndex} مجموعة من ${groupsList.length}.`, 'success');
+                } else if (stopPostingFlag) { // Stopped by user
+                     // Status already shown by stop button handler or updated during stop
+                }
+
+                // --- Final UI Reset ---
+                isPosting = false; // Ensure posting state is false
+                stopPostingFlag = false; // Reset flag
+                disableForm(false); // Re-enable form for next use
+                stopBtn.style.display = 'none'; // Hide stop button
+                // Optionally hide progress after completion/stop
+                // progressContainer.style.display = 'none';
+                 clearTimeout(timeoutId); // Clear any final stray timeouts
+                 clearInterval(countdownInterval); // Clear any final stray countdowns
+                 timerDisplay.style.display = 'none'; // Hide timer display
+                return; // Exit the loop
+            }
+
+            const currentGroup = groupsList[currentGroupIndex];
+
+             // --- Safety Pause Check ---
+             if (pauseOptionCheckbox.checked && postCountSincePause > 0 && postCountSincePause % 5 === 0) {
+                 const pauseMinutes = 60;
+                 showStatus(`🛡️ أمان: إيقاف مؤقت لمدة ${pauseMinutes} دقيقة بعد نشر 5 منشورات. الاستئناف تلقائياً...`, 'warning');
+                 startCountdownTimer(pauseMinutes * 60);
+
+                 timeoutId = setTimeout(() => {
+                     if (!stopPostingFlag && isPosting) { // Check flags before resuming
+                         postCountSincePause = 0; // Reset counter after pause
+                         showStatus(`▶️ استئناف النشر بعد التوقف المؤقت للمجموعة: ${currentGroup.name}`, 'info');
+                         postToGroupAndProceed(currentGroup, groupsList); // Post to current group then proceed
+                     }
+                 }, pauseMinutes * 60 * 1000);
+                 return; // Wait for the pause timeout
+             }
+
+             // --- No Pause Needed, Post Directly ---
+              postToGroupAndProceed(currentGroup, groupsList);
+        }
+
+
+        async function postToGroupAndProceed(group, groupsList) {
+             if (stopPostingFlag || !isPosting) return; // Double check before API call
+
+             showStatus(`⏳ جاري النشر في (${currentGroupIndex + 1}/${groupsList.length}): ${group.name}...`, 'info');
+             updateProgress(currentGroupIndex + 1, groupsList.length); // Update progress before posting
+
+             const postSuccess = await postToGroupAPI(group); // Perform the API call
+
+             // --- After Post Attempt (Success or Fail) ---
+              if (stopPostingFlag || !isPosting) return; // Check again if stopped during API call
+
+              currentGroupIndex++;
+              if (postSuccess) { // Only increment pause counter on success? Or on attempt? Let's do attempt.
+                    postCountSincePause++;
+              }
+
+              // --- Schedule Next Post ---
+              if (currentGroupIndex < groupsList.length) {
+                 const minDelayMinutes = parseInt(minIntervalInput.value) || 5;
+                 const maxDelayMinutes = parseInt(maxIntervalInput.value) || 15;
+                 // Ensure max is greater than min
+                 const actualMax = Math.max(minDelayMinutes + 1, maxDelayMinutes);
+                 const delayMinutes = Math.random() * (actualMax - minDelayMinutes) + minDelayMinutes;
+                 const delayMillis = delayMinutes * 60 * 1000;
+
+                 showStatus(`👍 تم التعامل مع ${group.name}. الانتظار ${delayMinutes.toFixed(1)} دقيقة للنشر التالي...`, 'info');
+                 startCountdownTimer(Math.floor(delayMillis / 1000));
+
+                 timeoutId = setTimeout(() => {
+                     if (!stopPostingFlag && isPosting) { // Check flags before next post
+                         postToNextGroup(groupsList); // Call for the next group
+                     }
+                 }, delayMillis);
+              } else {
+                  // Last group was processed, call postToNextGroup to trigger completion logic
+                  postToNextGroup(groupsList);
+              }
+        }
+
+
+        async function postToGroupAPI(group) {
+            const token = accessTokenInput.value;
+            let baseContent = postContentInput.value.trim(); // Original content
+            const imageFile = imageUpload.files[0];
+            const randomize = randomizeContentCheckbox.checked;
+            let success = false;
+
+            // --- Prepare Content ---
+             // Replace placeholder {اسم_المجموعة}
+             let finalContent = baseContent.replace(/{اسم_المجموعة}/g, group.name);
+
+             // Randomize (simple)
+             if (randomize && finalContent) {
+                 const variations = ['\u200B', '\u200C', '\u200D', ' ']; // Zero-width spaces, regular space
+                 finalContent += variations[Math.floor(Math.random() * variations.length)];
+             }
+
+
+            const apiUrlBase = `https://graph.facebook.com/${API_VERSION}/${group.id}`;
+            let apiUrl;
+            let requestOptions = {
+                method: 'POST',
+                headers: {},
+                body: null
+            };
+
+            try {
+                if (imageFile) {
+                    // --- Post Photo ---
+                    apiUrl = `${apiUrlBase}/photos`;
+                    const formData = new FormData();
+                    formData.append('access_token', token);
+                    if (finalContent) {
+                        formData.append('caption', finalContent);
+                    }
+                    formData.append('source', imageFile);
+                     // If scheduling is needed for photos, FB often requires using specific ad/business APIs,
+                     // simpler APIs might not support direct photo scheduling easily. Assuming immediate post here.
+                     // formData.append('published', 'true'); // Explicitly publish now
+
+                    requestOptions.body = formData;
+                    // Content-Type is set automatically by browser for FormData
+
+                } else if (finalContent) {
+                    // --- Post Feed (Text) ---
+                    apiUrl = `${apiUrlBase}/feed`;
+                    const params = {
+                        access_token: token,
+                        message: finalContent
+                    };
+                    // Note: Scheduling text posts via /feed with scheduled_publish_time might work,
+                    // but was not fully implemented in the UI logic flow (UI schedules the *start*).
+                    // params.published = true; // Explicitly publish now if not scheduling via API
+
+                    requestOptions.headers['Content-Type'] = 'application/x-www-form-urlencoded'; // Often preferred for simple feed posts
+                     requestOptions.body = new URLSearchParams(params).toString(); // Encode params correctly
+
+                } else {
+                    console.warn(`No content (text/image) to post in group: ${group.name}`);
+                    showStatus(`⚠️ تخطي المجموعة ${group.name}: لا يوجد محتوى نصي أو صورة.`, 'warning');
+                    return false; // Indicate failure/skip for this group
+                }
+
+                // --- Make API Call ---
+                const response = await fetch(apiUrl, requestOptions);
+                const result = await response.json();
+
+                if (!response.ok || result.error) {
+                    const error = result.error || { code: 'HTTP'+response.status, message: response.statusText };
+                    const errorMessage = `(${error.code}) ${error.message || 'Unknown API Error'}`;
+                    console.error(`Failed to post to ${group.name}: ${errorMessage}`, result);
+                    showStatus(`❌ خطأ في النشر بـ ${group.name}: ${errorMessage}. قد تكون بسبب الأذونات أو قيود المجموعة.`, 'error');
+                    success = false;
+                    // Specific error handling examples:
+                    if (error.code === 200) { // Permissions error
+                         // Maybe stop the whole process if permissions are globally missing?
+                    } else if (error.code === 10) { // Permission Denied - Group specific?
+                         // Just log and continue
+                    } else if (error.code === 368) { // Temporarily blocked
+                         showStatus(`🚫 حسابك محظور مؤقتًا عن النشر بسبب نشاط مفرط. تم إيقاف العملية.`, 'error');
+                         stopPostingFlag = true; // Stop the whole process
+                         isPosting = false;
+                    }
+                } else {
+                    console.log(`Successfully posted to ${group.name}:`, result);
+                    // Success status is handled by the calling function ('تم التعامل مع...')
+                    success = true;
+                }
+
+            } catch (error) {
+                console.error(`Network/Fetch error posting to ${group.name}:`, error);
+                showStatus(` নেটওয়ার্ক ত্রুটি أو خطأ تقني أثناء النشر في ${group.name}: ${error.message}`, 'error');
+                success = false;
+                 // Consider stopping if network fails repeatedly
+            }
+            return success;
+        }
+
+        // --- معالجات الأحداث الإضافية ---
+
+        postTypeSelect.addEventListener('change', function() {
+            scheduleOptions.style.display = (this.value === 'schedule') ? 'block' : 'none';
+        });
+
+        imageUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    uploadedImage.src = event.target.result;
+                    uploadedImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                uploadedImage.src = '';
+                uploadedImage.style.display = 'none';
+                 if (file) { // If a file was selected but wasn't an image
+                      showStatus('الرجاء اختيار ملف صورة صالح (png, jpg, gif).', 'warning');
+                      imageUpload.value = ''; // Clear the invalid selection
+                 }
+            }
+        });
+
+        // --- تهيئة أولية عند تحميل الصفحة ---
+        function initializeApp() {
+            scheduleOptions.style.display = 'none';
+            stopBtn.style.display = 'none';
+            progressContainer.style.display = 'none';
+            groupSearchContainer.style.display = 'none';
+            groupLoadingOptions.style.display = 'none';
+            groupsContainer.innerHTML = '<p>الرجاء إدخال رمز الوصول والضغط على "تحميل المجموعات".</p>';
+             currentlySelectedGroupsForPosting = []; // Clear selection on load
+        }
+
+        // استدعاء التهيئة عند تحميل المحتوى
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+    </script>
+
+</body>
+</html>
